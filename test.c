@@ -1,7 +1,9 @@
-#include <stdio.h>
+//#define CKB_C_STDLIB_PRINTF
+//#include <stdio.h>
 #include "src/ed25519.h"
 
 int sign_and_verify_once() {
+  int err = 0;
   unsigned char public_key[32], private_key[64], seed[32], scalar[32];
   unsigned char signature[64];
 
@@ -9,20 +11,21 @@ int sign_and_verify_once() {
   const int message_len = sizeof(message)-1;
 
   /* create a random seed, and a keypair out of that seed */
-  ed25519_create_seed(seed);
+//  ed25519_create_seed(seed);
   ed25519_create_keypair(public_key, private_key, seed);
 
   /* create signature on the message with the keypair */
   ed25519_sign(signature, message, message_len, public_key, private_key);
 
   /* verify the signature */
-  if (ed25519_verify(signature, message, message_len, public_key)) {
-    printf("valid signature\n");
-    return 0;
-  } else {
-    printf("invalid signature\n");
-    return -1;
-  }
+//  err = ed25519_verify(signature, message, message_len, public_key);
+  err = ed25519_verify(signature, message, message_len, public_key);
+
+  if (err != 0)
+    err = 0;
+  else
+    err = 1;
+  return err;
 }
 
 int main(int argc, const char* argv[]) {
