@@ -13,13 +13,8 @@ all: build/ed25519_demo
 all-via-docker:
 	docker run --rm -v `pwd`:/code ${BUILDER_DOCKER} bash -c "cd /code && make"
 
-%.o: %.c
-	$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@ $^
-
-
 build/impl.o: deps/ckb-c-stdlib/libc/src/impl.c
 	$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@ $^
-
 
 build/ed25519_demo: build/test.o build/sign.o build/verify.o build/sha512.o build/sc.o build/keypair.o build/key_exchange.o build/ge.o build/fe.o build/add_scalar.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
@@ -29,37 +24,11 @@ build/ed25519_demo: build/test.o build/sign.o build/verify.o build/sha512.o buil
 build/test.o: test.c
 	$(CC) -c $(filter-out -DCKB_DECLARATION_ONLY, $(CFLAGS)) $(LDFLAGS) -o $@ $^
 
-build/sign.o: src/sign.c
+build/%.o: src/%.c
 	$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@ $^
 
-build/verify.o: src/verify.c
-	$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@ $^
-
-build/sha512.o: src/sha512.c
-	$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@ $^
-
-build/sc.o: src/sc.c
-	$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@ $^
-
-build/keypair.o: src/keypair.c
-	$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@ $^
-
-build/key_exchange.o: src/key_exchange.c
-	$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@ $^
-
-run: build/ed25519_demo
+run:
 	~/projects/ckb-vm-test-suite/binary/target/debug/asm64 build/ed25519_demo
-
-build/ge.o: src/ge.c
-	$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@ $^
-
-
-build/fe.o: src/fe.c
-	$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@ $^
-
-
-build/add_scalar.o: src/add_scalar.c
-	$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 fmt:
 	clang-format -i -style=Google $(wildcard c/*.h c/*.c)
