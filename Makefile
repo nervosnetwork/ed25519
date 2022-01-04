@@ -18,7 +18,7 @@ build/impl.o: deps/ckb-c-stdlib/libc/src/impl.c
 
 build/ed25519_demo: build/test.o build/sign.o build/verify.o build/sha512.o build/sc.o build/keypair.o build/key_exchange.o build/ge.o build/fe.o build/add_scalar.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
-	$(OBJCOPY) --only-keep-debug $@ $@.debug
+	cp $@ $@.debug
 	$(OBJCOPY) --strip-debug --strip-all $@
 
 build/test.o: test.c
@@ -28,7 +28,7 @@ build/%.o: src/%.c
 	$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 run:
-	~/projects/ckb-vm-test-suite/binary/target/debug/asm64 build/ed25519_demo
+	ckb-debugger --bin build/ed25519_demo
 
 fmt:
 	clang-format -i -style=Google $(wildcard c/*.h c/*.c)
