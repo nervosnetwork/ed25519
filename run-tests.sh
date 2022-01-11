@@ -12,10 +12,11 @@ function test_one() {
   cat $FN | while read line || [[ -n $line ]];
   do
      ./portable_ed25519 -t ${line//:/ 0x}
+     ckb-debugger --bin ../build/ed25519_demo -- program -t ${line//:/ 0x}
   done
 }
 
 test_one ../tests/TESTVECTORS
 test_one ../tests/polkadot.txt
 
-echo "if no output from stdout, it means success!"
+echo "Done"

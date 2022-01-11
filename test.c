@@ -7,6 +7,7 @@
 #define ASSERT(e) ((void)0)
 
 #include <string.h>
+
 #include "src/ed25519.h"
 
 #define CHECK2(cond, code) \
@@ -26,8 +27,6 @@
       goto exit;     \
     }                \
   } while (0)
-
-
 
 /* hex2bin modified from
  * https://chromium.googlesource.com/chromium/deps/xz/+/77022065014d48cf51d83322264ab4836fd175ec/debug/hex2bin.c
@@ -50,7 +49,8 @@ int hex2bin(uint8_t* buf, const char* src) {
   return length;
 }
 
-int test_main(const char* sec_str, const char* pub_str, const char* msg_str, const char* sig_str) {
+int test_main(const char* sec_str, const char* pub_str, const char* msg_str,
+              const char* sig_str) {
   int err = 0;
   int len = 0;
   int msg_len = 0;
@@ -67,7 +67,7 @@ int test_main(const char* sec_str, const char* pub_str, const char* msg_str, con
   ASSERT(msg_len >= 0);
   // sig part: signature + original message
   len = hex2bin(sig, sig_str);
-//  ASSERT(len == (msg_len + 64));
+  //  ASSERT(len == (msg_len + 64));
 
   int success = ed25519_verify(sig, msg, msg_len, pub);
   CHECK2(success, -1);
@@ -75,7 +75,8 @@ int test_main(const char* sec_str, const char* pub_str, const char* msg_str, con
   err = 0;
 exit:
   if (err != 0) {
-    printf("error, test cases failed with sec_str = %s, msg_str = %s", sec_str, msg_str);
+    printf("error, test cases failed with sec_str = %s, msg_str = %s", sec_str,
+           msg_str);
   }
   return err;
 }
@@ -86,17 +87,17 @@ int sign_and_verify_once() {
   unsigned char signature[64];
 
   const unsigned char message[] = "Hello, world!";
-  const int message_len = sizeof(message)-1;
+  const int message_len = sizeof(message) - 1;
 
   /* create a random seed, and a keypair out of that seed */
-//  ed25519_create_seed(seed);
+  //  ed25519_create_seed(seed);
   ed25519_create_keypair(public_key, private_key, seed);
 
   /* create signature on the message with the keypair */
   ed25519_sign(signature, message, message_len, public_key, private_key);
 
   /* verify the signature */
-//  err = ed25519_verify(signature, message, message_len, public_key);
+  //  err = ed25519_verify(signature, message, message_len, public_key);
   err = ed25519_verify(signature, message, message_len, public_key);
 
   if (err != 0)

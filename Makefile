@@ -12,10 +12,7 @@ all: build/ed25519_demo
 
 all-via-docker:
 	docker run --rm -v `pwd`:/code ${BUILDER_DOCKER} bash -c "cd /code && make"
-
-build/impl.o: deps/ckb-c-stdlib/libc/src/impl.c
-	$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@ $^
-
+	
 build/ed25519_demo: build/test.o build/libed25519.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 	cp $@ $@.debug
@@ -30,12 +27,12 @@ build/%.o: src/%.c
 build/libed25519.a: build/sign.o build/verify.o build/sha512.o build/sc.o build/keypair.o build/key_exchange.o build/ge.o build/fe.o build/add_scalar.o
 	$(AR) r $@ $^
 
+fmt:
+	clang-format -i -style=Google test.c
+
+
 run:
 	ckb-debugger --bin build/ed25519_demo
-
-fmt:
-	clang-format -i -style=Google $(wildcard c/*.h c/*.c)
-	git diff --exit-code $(wildcard c/*.h c/*.c)
 
 clean:
 	rm -rf build/*.debug
